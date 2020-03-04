@@ -11,3 +11,16 @@ You will need [NASM](https://www.nasm.us/), the Netwide Assembler, and the
 there are a ton of ways to get them. Since I am running Arch Linux, I use
 
 `sudo pacman -S nasm bochs`
+
+## How do I compile and run this project
+Provided you have nasm and bochs installed properly, run the following commands:
+
+`make all`
+
+This will assemble to code into `boot.com`
+
+Then run :
+
+`make run`
+
+This will run the bootloader in bochs.
