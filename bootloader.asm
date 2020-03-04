@@ -28,3 +28,31 @@ mov ss, ax
 ; So going forward, we will have 8k space to put stuff on the
 ; stack (The stack pointer grows downward).
 mov sp, 0x2000
+
+clearscreen:
+	push bp
+	mov bp, sp
+	; Push all general registers onto the stack
+	pusha
+
+	; Tells BIOS to scroll down the window
+	mov ah, 0x07
+	; Tells BIOS to clear entire window
+	mov al, 0x00
+	; Specifies white on black
+	mov bh, 0x07
+	; Specifies top left as (0, 0)
+	mov cx, 0x00
+	; 0x18 says 24 rows of chars
+	mov dh, 0x18
+	; 0x4f says 79 cols of chars
+	mov dl 0x4f
+
+	; Video interrupt
+	int 0x10
+
+	; Pop all general registers off the stack
+	popa
+	mov sp, bp
+	pop bp
+	ret
