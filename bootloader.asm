@@ -1,3 +1,6 @@
+; Specifies 16 bit real mode
+bits 16
+
 ; Our code resides at physical address 0x7C00. So we move
 ; logical address 0x7C0 into the data segment. To translate
 ; a logical address to phsycal, we do the following equation:
@@ -18,6 +21,24 @@ mov ds, ax
 ; for our bootloader.
 mov ax, 0x7E0
 mov ss, ax
+
+; Do clearscreen call
+call clearscreen
+
+; Move cursor to correct position
+push 0x0000
+call movecursor
+add sp, 2
+
+; Print the message
+push msg
+call print
+add sp, 2
+
+; Stop accepting interrupts
+cli
+; Halt all processing
+hlt
 
 ; Finally, we set the stack pointer. This is the "B" part
 ; in our equation: A * (0x10) + B. To make the equation concrete,
@@ -119,3 +140,8 @@ print:
 
 ; db command declares and initializes data in the resulting output file
 msg:	db "Hello, world!", 0
+
+; Pads the rest of bootloader to have zeros
+times 510-(\$-$$) db 0
+; Writes the boot signature to end of bootloader
+dw 0xAA55
