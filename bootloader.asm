@@ -56,3 +56,27 @@ clearscreen:
 	mov sp, bp
 	pop bp
 	ret
+
+movecursor:
+	push bp
+	mov bp, sp
+	; Push all general registers onto the stack
+	pusha
+
+	; Get the arguments. The contents of bp is 2 bytes,
+	; and each argument is a byte. Thus, we need to move 4 bytes
+	mov dx, [bp+4]
+
+	; Specify the move cursor interrupt
+	mov ah, 0x02
+	; The the page to draw to. Since we aren't doing double
+	; buffering, we can leave this at 0
+	mov bh, 0x00
+
+	int 0x10
+	
+	; Pop all general registers off the stack
+	popa
+	mov sp, bp
+	pop bp
+	ret
