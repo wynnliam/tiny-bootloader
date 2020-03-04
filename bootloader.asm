@@ -81,5 +81,41 @@ movecursor:
 	pop bp
 	ret
 
+print:
+	push bp
+	mov bp, sp
+	; Push all general registers onto the stack
+	pusha
+
+	; Grab the argument
+	mov si, [bp+4]
+
+	; Set current render page to 0
+	mov bh, 0x00
+	; Set foreground color. Sine we are in text mode, this
+	; is irrelevent.
+	mov bl, 0x00
+	; Print character to TTY
+	mov ah, 0x0E
+
+	.char:
+		; grab current character
+		mov al, [si]
+		; Move string pointer to next character
+		add si, 1
+		; if al == 0, return
+		or al, 0
+		je .return
+		; Do BIOS interrupt
+		int 0x10
+		jmp .char
+
+	.return:
+		; Pop all general registers off the stack
+		popa
+		mov sp, bp
+		pop bp
+		ret
+
 ; db command declares and initializes data in the resulting output file
 msg:	db "Hello, world!", 0
