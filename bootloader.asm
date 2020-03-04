@@ -80,3 +80,6 @@ movecursor:
 	mov sp, bp
 	pop bp
 	ret
+
+; db command declares and initializes data in the resulting output file
+msg:	db "Hello, world!", 0
