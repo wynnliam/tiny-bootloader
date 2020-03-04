@@ -22,6 +22,16 @@ mov ds, ax
 mov ax, 0x7E0
 mov ss, ax
 
+; Finally, we set the stack pointer. This is the "B" part
+; in our equation: A * (0x10) + B. To make the equation concrete,
+; the last item we put on the stack has physical address:
+;
+; ss * (0x10) + sp
+;
+; So going forward, we will have 8k space to put stuff on the
+; stack (The stack pointer grows downward).
+mov sp, 0x2000
+
 ; Do clearscreen call
 call clearscreen
 
@@ -40,16 +50,6 @@ cli
 ; Halt all processing
 hlt
 
-; Finally, we set the stack pointer. This is the "B" part
-; in our equation: A * (0x10) + B. To make the equation concrete,
-; the last item we put on the stack has physical address:
-;
-; ss * (0x10) + sp
-;
-; So going forward, we will have 8k space to put stuff on the
-; stack (The stack pointer grows downward).
-mov sp, 0x2000
-
 clearscreen:
 	push bp
 	mov bp, sp
@@ -67,7 +67,7 @@ clearscreen:
 	; 0x18 says 24 rows of chars
 	mov dh, 0x18
 	; 0x4f says 79 cols of chars
-	mov dl 0x4f
+	mov dl, 0x4f
 
 	; Video interrupt
 	int 0x10
@@ -142,6 +142,6 @@ print:
 msg:	db "Hello, world!", 0
 
 ; Pads the rest of bootloader to have zeros
-times 510-(\$-$$) db 0
+times 510-($-$$) db 0
 ; Writes the boot signature to end of bootloader
 dw 0xAA55
